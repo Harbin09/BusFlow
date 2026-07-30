@@ -1,0 +1,301 @@
+student_id,name,program,semester,route_id,pickup_stop
+CTU1001,Ishita Jain,MBA,1,RT-001,VIP Road
+CTU1002,Harsh Bansal,B.Com,2,RT-001,Baltana
+CTU1003,Dev Arora,B.Tech AI,8,RT-001,Dhakoli
+CTU1004,Ishita Gupta,MCA,3,RT-001,Dhakoli
+CTU1005,Tanya Malhotra,MCA,2,RT-001,Baltana
+CTU1006,Sanya Singh,MBA,2,RT-001,VIP Road
+CTU1007,Kunal Gupta,MCA,7,RT-001,Dhakoli
+CTU1008,Kunal Gupta,MBA,1,RT-001,Baltana
+CTU1009,Ananya Kaur,B.Com,3,RT-001,VIP Road
+CTU1010,Ishita Bansal,B.Tech AI,7,RT-001,VIP Road
+CTU1011,Harsh Mehta,MBA,2,RT-001,VIP Road
+CTU1012,Ishita Arora,B.Com,1,RT-001,Dhakoli
+CTU1013,Aditya Malhotra,BCA,4,RT-001,Dhakoli
+CTU1014,Ananya Sharma,BCA,2,RT-001,Dhakoli
+CTU1015,Rohan Malhotra,MCA,3,RT-001,Baltana
+CTU1016,Rohan Kaur,BCA,2,RT-001,VIP Road
+CTU1017,Rahul Mehta,B.Tech CSE,6,RT-001,VIP Road
+CTU1018,Rohan Malhotra,MCA,8,RT-001,Baltana
+CTU1019,Vivaan Mehta,MCA,2,RT-001,VIP Road
+CTU1020,Rahul Arora,MCA,8,RT-001,Dhakoli
+CTU1021,Yash Mehta,BCA,5,RT-001,Dhakoli
+CTU1022,Harsh Singh,B.Com,5,RT-001,Baltana
+CTU1023,Aditya Verma,BCA,4,RT-001,Dhakoli
+CTU1024,Priya Bansal,B.Tech CSE,6,RT-001,Dhakoli
+CTU1025,Kunal Arora,MCA,2,RT-001,Dhakoli
+CTU1026,Harsh Gupta,MBA,6,RT-001,Baltana
+CTU1027,Dev Singh,MBA,8,RT-001,Baltana
+CTU1028,Vivaan Sharma,MCA,8,RT-001,VIP Road
+CTU1029,Rohan Singh,BBA,8,RT-001,Baltana
+CTU1030,Dev Verma,BCA,4,RT-001,VIP Road
+CTU1031,Sanya Jain,B.Com,2,RT-001,VIP Road
+CTU1032,Diya Gupta,BCA,1,RT-001,Dhakoli
+CTU1033,Aditya Jain,BBA,4,RT-001,Dhakoli
+CTU1034,Aarav Jain,MBA,3,RT-001,VIP Road
+CTU1035,Aditya Mehta,MBA,3,RT-001,Baltana
+CTU1036,Arjun Malhotra,BBA,7,RT-001,Dhakoli
+CTU1037,Priya Mehta,B.Com,4,RT-001,Baltana
+CTU1038,Ishita Verma,B.Tech CSE,2,RT-001,Dhakoli
+CTU1039,Sanya Gupta,B.Tech AI,2,RT-001,Dhakoli
+CTU1040,Arjun Jain,BCA,3,RT-001,VIP Road
+CTU1041,Ananya Arora,BBA,7,RT-001,Baltana
+CTU1042,Priya Mehta,MBA,7,RT-001,Baltana
+CTU1043,Arjun Malhotra,BCA,2,RT-001,VIP Road
+CTU1044,Harsh Mehta,BBA,7,RT-001,Dhakoli
+CTU1045,Harsh Gupta,MCA,6,RT-001,Dhakoli
+CTU1046,Harsh Malhotra,BBA,4,RT-001,Dhakoli
+CTU1047,Simran Bansal,MBA,7,RT-001,Patiala Road
+CTU1048,Ananya Kaur,MBA,4,RT-001,Dhakoli
+CTU1049,Rohan Malhotra,MCA,6,RT-001,Baltana
+CTU1050,Diya Malhotra,MCA,4,RT-001,Patiala Road
+CTU1051,Arjun Jain,B.Tech CSE,8,RT-001,Baltana
+CTU1052,Rohan Bansal,B.Tech CSE,4,RT-001,Baltana
+CTU1053,Kunal Verma,MBA,7,RT-001,Dhakoli
+CTU1054,Aditya Mehta,B.Tech CSE,3,RT-001,Baltana
+CTU1055,Aditya Sharma,MCA,6,RT-001,Dhakoli
+CTU1056,Priya Jain,BCA,6,RT-001,Baltana
+CTU1057,Ishita Verma,B.Tech AI,6,RT-001,Dhakoli
+CTU1058,Yash Kaur,MBA,2,RT-001,Patiala Road
+CTU1059,Yash Jain,MCA,6,RT-001,Baltana
+CTU1060,Mehak Gupta,MCA,6,RT-001,Baltana
+CTU1061,Aarav Bansal,MBA,3,RT-001,Patiala Road
+CTU1062,Diya Bansal,B.Tech AI,5,RT-001,Patiala Road
+CTU1063,Dev Arora,MBA,5,RT-001,Patiala Road
+CTU1064,Yash Arora,MBA,4,RT-001,Patiala Road
+CTU1065,Mehak Verma,MBA,4,RT-001,Patiala Road
+CTU1066,Vivaan Singh,B.Tech AI,3,RT-001,Dhakoli
+CTU1067,Ishita Singh,BCA,6,RT-001,Baltana
+CTU1068,Sanya Arora,MBA,2,RT-001,Patiala Road
+CTU1069,Rohan Arora,BBA,5,RT-001,Dhakoli
+CTU1070,Yash Singh,MCA,3,RT-001,Patiala Road
+CTU1071,Vivaan Bansal,BCA,7,RT-001,Baltana
+CTU1072,Aarav Sharma,B.Tech CSE,7,RT-001,Dhakoli
+CTU1073,Kabir Bansal,BBA,7,RT-001,Dhakoli
+CTU1074,Tanya Arora,BBA,1,RT-001,Patiala Road
+CTU1075,Kunal Gupta,BCA,8,RT-001,Patiala Road
+CTU1076,Mehak Arora,B.Tech CSE,4,RT-001,Patiala Road
+CTU1077,Rohan Singh,MBA,4,RT-001,Dhakoli
+CTU1078,Ananya Gupta,B.Com,4,RT-001,Baltana
+CTU1079,Sanya Jain,B.Tech AI,5,RT-001,Dhakoli
+CTU1080,Rohan Singh,BCA,2,RT-001,Dhakoli
+CTU1081,Aarav Jain,BBA,1,RT-001,Dhakoli
+CTU1082,Dev Gupta,B.Tech AI,7,RT-001,Patiala Road
+CTU1083,Yash Singh,B.Com,4,RT-001,Patiala Road
+CTU1084,Priya Mehta,MCA,3,RT-001,Patiala Road
+CTU1085,Aarav Jain,BCA,8,RT-001,Dhakoli
+CTU1086,Arjun Singh,BBA,2,RT-001,Dhakoli
+CTU1087,Tanya Malhotra,MCA,6,RT-002,Airport Road
+CTU1088,Vivaan Arora,MBA,7,RT-002,Airport Road
+CTU1089,Tanya Bansal,MCA,5,RT-002,Airport Road
+CTU1090,Arjun Gupta,MBA,7,RT-002,Phase 10
+CTU1091,Ananya Mehta,MBA,7,RT-002,Phase 10
+CTU1092,Ishita Malhotra,B.Tech CSE,1,RT-002,Airport Road
+CTU1093,Aditya Verma,MBA,5,RT-002,Phase 7
+CTU1094,Kabir Sharma,B.Com,3,RT-002,Phase 7
+CTU1095,Riya Sharma,MCA,6,RT-002,Airport Road
+CTU1096,Tanya Sharma,MBA,3,RT-002,Phase 10
+CTU1097,Simran Singh,MBA,2,RT-002,Phase 7
+CTU1098,Kabir Jain,B.Com,4,RT-002,Phase 7
+CTU1099,Vivaan Bansal,B.Tech CSE,6,RT-002,Phase 7
+CTU1100,Kunal Arora,MBA,8,RT-002,Phase 7
+CTU1101,Kabir Verma,B.Com,4,RT-002,Phase 10
+CTU1102,Aditya Gupta,BBA,5,RT-002,Phase 10
+CTU1103,Harsh Gupta,BCA,4,RT-002,Phase 10
+CTU1104,Rahul Gupta,MCA,6,RT-002,Airport Road
+CTU1105,Ishita Arora,MBA,8,RT-002,Phase 10
+CTU1106,Rohan Sharma,MBA,3,RT-002,Airport Road
+CTU1107,Simran Mehta,BBA,8,RT-002,Airport Road
+CTU1108,Simran Singh,MCA,5,RT-002,Phase 10
+CTU1109,Mehak Mehta,B.Tech AI,3,RT-002,Phase 7
+CTU1110,Rahul Malhotra,B.Tech AI,8,RT-002,Airport Road
+CTU1111,Rahul Arora,BCA,6,RT-002,Airport Road
+CTU1112,Arjun Bansal,B.Com,5,RT-002,Phase 7
+CTU1113,Kunal Gupta,B.Tech CSE,4,RT-002,Phase 10
+CTU1114,Arjun Singh,B.Com,6,RT-002,Phase 7
+CTU1115,Rahul Arora,BCA,3,RT-002,Airport Road
+CTU1116,Dev Jain,BCA,6,RT-002,Airport Road
+CTU1117,Aditya Mehta,MCA,2,RT-002,Airport Road
+CTU1118,Diya Kaur,B.Tech AI,5,RT-002,Phase 7
+CTU1119,Rahul Sharma,MCA,4,RT-002,Airport Road
+CTU1120,Yash Sharma,B.Com,7,RT-002,Phase 7
+CTU1121,Mehak Jain,B.Tech CSE,8,RT-002,Airport Road
+CTU1122,Priya Malhotra,B.Com,1,RT-002,Airport Road
+CTU1123,Aarav Sharma,B.Com,7,RT-002,Phase 7
+CTU1124,Rahul Malhotra,MBA,8,RT-002,Airport Road
+CTU1125,Arjun Malhotra,B.Tech CSE,1,RT-002,Phase 7
+CTU1126,Harsh Verma,BCA,4,RT-002,Phase 10
+CTU1127,Riya Malhotra,B.Tech AI,4,RT-002,Phase 7
+CTU1128,Rahul Bansal,B.Tech AI,3,RT-002,Phase 7
+CTU1129,Kabir Sharma,MCA,2,RT-002,Airport Road
+CTU1130,Harsh Jain,B.Com,5,RT-003,Sector 43
+CTU1131,Riya Malhotra,BCA,6,RT-003,Sector 17
+CTU1132,Ananya Singh,B.Com,1,RT-003,Sector 22
+CTU1133,Rohan Singh,B.Tech AI,1,RT-003,Sector 43
+CTU1134,Yash Mehta,B.Tech AI,4,RT-003,Sector 22
+CTU1135,Kabir Singh,B.Com,6,RT-003,Sector 17
+CTU1136,Ananya Gupta,MCA,7,RT-003,Sector 43
+CTU1137,Ananya Sharma,MBA,2,RT-003,Sector 22
+CTU1138,Yash Arora,B.Tech AI,8,RT-003,Sector 43
+CTU1139,Ananya Verma,BCA,8,RT-003,Sector 43
+CTU1140,Rohan Sharma,BCA,2,RT-003,Sector 22
+CTU1141,Harsh Singh,MCA,4,RT-003,Sector 17
+CTU1142,Kabir Bansal,MBA,6,RT-003,Sector 22
+CTU1143,Diya Gupta,BCA,4,RT-003,Sector 17
+CTU1144,Mehak Verma,MBA,6,RT-003,Sector 43
+CTU1145,Harsh Arora,MCA,2,RT-003,Sector 43
+CTU1146,Ishita Bansal,MCA,3,RT-003,Sector 17
+CTU1147,Aditya Kaur,B.Com,8,RT-003,Sector 17
+CTU1148,Mehak Arora,MCA,7,RT-003,Sector 43
+CTU1149,Arjun Kaur,B.Com,5,RT-003,Sector 22
+CTU1150,Arjun Kaur,MBA,2,RT-003,Sector 17
+CTU1151,Kunal Bansal,BBA,5,RT-003,Sector 22
+CTU1152,Harsh Verma,MBA,2,RT-003,Sector 22
+CTU1153,Kabir Mehta,B.Tech AI,1,RT-003,Sector 43
+CTU1154,Rahul Sharma,BCA,5,RT-003,Sector 22
+CTU1155,Rahul Kaur,BBA,7,RT-003,Sector 17
+CTU1156,Mehak Singh,MCA,8,RT-003,Sector 43
+CTU1157,Tanya Mehta,BBA,1,RT-003,Sector 22
+CTU1158,Kabir Singh,B.Tech AI,8,RT-003,Sector 22
+CTU1159,Yash Gupta,B.Tech CSE,4,RT-003,Sector 43
+CTU1160,Dev Singh,B.Tech CSE,8,RT-003,Sector 43
+CTU1161,Rohan Jain,MCA,7,RT-003,Sector 43
+CTU1162,Rohan Kaur,MBA,7,RT-003,Sector 22
+CTU1163,Ananya Gupta,B.Tech CSE,1,RT-003,Sector 43
+CTU1164,Dev Sharma,B.Tech AI,8,RT-003,Sector 17
+CTU1165,Tanya Gupta,MBA,3,RT-003,Sector 17
+CTU1166,Kabir Malhotra,B.Com,7,RT-003,Sector 43
+CTU1167,Vivaan Arora,B.Tech AI,5,RT-003,Sector 22
+CTU1168,Aarav Arora,MBA,8,RT-003,Sector 43
+CTU1169,Yash Gupta,BCA,6,RT-003,Sector 22
+CTU1170,Vivaan Verma,MBA,3,RT-003,Sector 17
+CTU1171,Rohan Jain,B.Tech AI,1,RT-003,Sector 22
+CTU1172,Kunal Verma,B.Tech AI,7,RT-003,Sector 22
+CTU1173,Sanya Arora,MCA,1,RT-003,Sector 43
+CTU1174,Dev Arora,B.Tech CSE,7,RT-003,Sector 34
+CTU1175,Ananya Mehta,B.Com,6,RT-003,Sector 17
+CTU1176,Tanya Singh,BCA,2,RT-003,Sector 17
+CTU1177,Yash Arora,BCA,6,RT-003,Sector 34
+CTU1178,Mehak Gupta,B.Com,2,RT-003,Sector 43
+CTU1179,Kabir Gupta,MCA,5,RT-003,Sector 34
+CTU1180,Yash Arora,BCA,1,RT-003,Sector 34
+CTU1181,Sanya Malhotra,MCA,2,RT-003,Sector 43
+CTU1182,Ishita Malhotra,B.Tech AI,4,RT-003,Sector 43
+CTU1183,Arjun Singh,B.Tech CSE,1,RT-003,Sector 17
+CTU1184,Ishita Kaur,MBA,2,RT-003,Sector 34
+CTU1185,Aditya Sharma,MCA,5,RT-003,Sector 43
+CTU1186,Simran Malhotra,BBA,6,RT-003,Sector 43
+CTU1187,Kunal Singh,BCA,7,RT-003,Sector 17
+CTU1188,Rohan Singh,BCA,7,RT-003,Sector 43
+CTU1189,Simran Mehta,B.Tech AI,7,RT-003,Sector 34
+CTU1190,Yash Bansal,BBA,1,RT-003,Sector 43
+CTU1191,Kabir Malhotra,B.Com,5,RT-003,Sector 34
+CTU1192,Dev Malhotra,B.Tech CSE,8,RT-003,Sector 17
+CTU1193,Sanya Singh,MBA,5,RT-003,Sector 43
+CTU1194,Kunal Verma,MCA,1,RT-003,Sector 43
+CTU1195,Vivaan Kaur,B.Tech AI,8,RT-003,Sector 34
+CTU1196,Aditya Malhotra,BBA,8,RT-003,Sector 43
+CTU1197,Kabir Singh,MBA,7,RT-003,Sector 34
+CTU1198,Vivaan Sharma,MBA,8,RT-003,Sector 43
+CTU1199,Rohan Kaur,BCA,3,RT-003,Sector 17
+CTU1200,Priya Singh,B.Tech CSE,6,RT-003,Sector 17
+CTU1201,Harsh Verma,B.Tech CSE,4,RT-003,Sector 34
+CTU1202,Riya Sharma,B.Tech AI,2,RT-003,Sector 34
+CTU1203,Tanya Singh,MBA,5,RT-003,Sector 43
+CTU1204,Vivaan Arora,MCA,3,RT-003,Sector 17
+CTU1205,Priya Mehta,B.Tech AI,5,RT-003,Sector 43
+CTU1206,Yash Malhotra,B.Tech CSE,4,RT-003,Sector 43
+CTU1207,Ananya Arora,B.Tech AI,6,RT-003,Sector 43
+CTU1208,Ishita Gupta,BCA,3,RT-003,Sector 43
+CTU1209,Tanya Singh,B.Tech AI,8,RT-003,Sector 34
+CTU1210,Kunal Kaur,B.Com,7,RT-003,Sector 34
+CTU1211,Riya Malhotra,MBA,6,RT-003,Sector 43
+CTU1212,Rohan Singh,B.Com,4,RT-003,Sector 43
+CTU1213,Ishita Arora,MBA,3,RT-003,Sector 43
+CTU1214,Priya Jain,BBA,6,RT-003,Sector 17
+CTU1215,Riya Singh,BBA,7,RT-003,Sector 34
+CTU1216,Diya Kaur,BCA,3,RT-004,Urban Estate
+CTU1217,Aarav Jain,BCA,6,RT-004,New Bus Stand
+CTU1218,Diya Singh,B.Tech AI,6,RT-004,Old Rajpura
+CTU1219,Vivaan Gupta,MBA,2,RT-004,Old Rajpura
+CTU1220,Riya Verma,BCA,4,RT-004,New Bus Stand
+CTU1221,Simran Mehta,B.Com,7,RT-004,New Bus Stand
+CTU1222,Diya Gupta,B.Tech AI,1,RT-004,New Bus Stand
+CTU1223,Aditya Mehta,MCA,8,RT-004,Old Rajpura
+CTU1224,Kunal Singh,B.Com,5,RT-004,Urban Estate
+CTU1225,Simran Verma,B.Tech AI,8,RT-004,Urban Estate
+CTU1226,Diya Verma,MBA,5,RT-004,Old Rajpura
+CTU1227,Aditya Gupta,B.Tech AI,5,RT-004,Urban Estate
+CTU1228,Vivaan Mehta,BBA,7,RT-004,Old Rajpura
+CTU1229,Kunal Malhotra,B.Tech AI,8,RT-004,New Bus Stand
+CTU1230,Simran Verma,MBA,8,RT-004,Urban Estate
+CTU1231,Priya Verma,MCA,1,RT-004,Urban Estate
+CTU1232,Vivaan Malhotra,B.Tech CSE,4,RT-004,New Bus Stand
+CTU1233,Diya Bansal,BCA,3,RT-004,New Bus Stand
+CTU1234,Sanya Malhotra,B.Com,6,RT-004,New Bus Stand
+CTU1235,Diya Arora,MCA,1,RT-004,Old Rajpura
+CTU1236,Ananya Arora,B.Com,1,RT-004,Urban Estate
+CTU1237,Rahul Bansal,BBA,6,RT-004,Old Rajpura
+CTU1238,Tanya Gupta,BCA,1,RT-004,Urban Estate
+CTU1239,Arjun Singh,B.Tech CSE,4,RT-004,Urban Estate
+CTU1240,Harsh Kaur,B.Tech AI,2,RT-004,Urban Estate
+CTU1241,Rahul Gupta,B.Tech AI,3,RT-004,New Bus Stand
+CTU1242,Ishita Mehta,BCA,6,RT-004,Old Rajpura
+CTU1243,Tanya Singh,MBA,8,RT-004,Urban Estate
+CTU1244,Vivaan Sharma,B.Tech CSE,5,RT-004,New Bus Stand
+CTU1245,Ishita Singh,MBA,2,RT-004,New Bus Stand
+CTU1246,Dev Malhotra,B.Tech CSE,3,RT-004,New Bus Stand
+CTU1247,Arjun Arora,B.Tech CSE,7,RT-004,Old Rajpura
+CTU1248,Ishita Bansal,BBA,1,RT-004,Urban Estate
+CTU1249,Aditya Kaur,B.Tech AI,5,RT-004,Urban Estate
+CTU1250,Mehak Kaur,MBA,7,RT-004,New Bus Stand
+CTU1251,Sanya Arora,MCA,3,RT-004,New Bus Stand
+CTU1252,Mehak Mehta,BCA,5,RT-004,Urban Estate
+CTU1253,Ishita Kaur,B.Tech AI,2,RT-004,New Bus Stand
+CTU1254,Rahul Mehta,MBA,6,RT-004,New Bus Stand
+CTU1255,Vivaan Mehta,MBA,2,RT-004,New Bus Stand
+CTU1256,Riya Sharma,B.Tech CSE,5,RT-004,Urban Estate
+CTU1257,Arjun Arora,B.Tech AI,4,RT-004,Urban Estate
+CTU1258,Aarav Singh,MBA,5,RT-004,Urban Estate
+CTU1259,Kunal Kaur,B.Tech AI,2,RT-005,Model Town
+CTU1260,Arjun Singh,B.Tech CSE,8,RT-005,Ambala Cantt
+CTU1261,Arjun Singh,MBA,2,RT-005,Model Town
+CTU1262,Rohan Malhotra,MBA,1,RT-005,Ambala Cantt
+CTU1263,Kabir Sharma,B.Tech AI,1,RT-005,Model Town
+CTU1264,Rahul Mehta,MCA,2,RT-005,Ambala Cantt
+CTU1265,Kabir Bansal,MBA,5,RT-005,Ambala Cantt
+CTU1266,Riya Kaur,BCA,7,RT-005,Model Town
+CTU1267,Sanya Mehta,B.Tech CSE,5,RT-005,Model Town
+CTU1268,Aarav Mehta,B.Tech AI,2,RT-005,Model Town
+CTU1269,Tanya Arora,B.Com,6,RT-005,Model Town
+CTU1270,Vivaan Kaur,B.Tech CSE,2,RT-005,Model Town
+CTU1271,Vivaan Bansal,BBA,3,RT-005,Ambala City
+CTU1272,Mehak Verma,BBA,4,RT-005,Ambala City
+CTU1273,Simran Gupta,MCA,5,RT-005,Model Town
+CTU1274,Tanya Bansal,B.Com,8,RT-005,Ambala Cantt
+CTU1275,Arjun Verma,BCA,6,RT-005,Model Town
+CTU1276,Ananya Singh,B.Tech AI,2,RT-005,Model Town
+CTU1277,Rahul Mehta,B.Com,4,RT-005,Model Town
+CTU1278,Kabir Arora,BCA,3,RT-005,Model Town
+CTU1279,Kabir Gupta,BCA,6,RT-005,Ambala Cantt
+CTU1280,Ishita Singh,BBA,7,RT-005,Model Town
+CTU1281,Yash Gupta,BCA,5,RT-005,Model Town
+CTU1282,Arjun Bansal,MCA,1,RT-005,Ambala City
+CTU1283,Diya Singh,BCA,4,RT-005,Ambala Cantt
+CTU1284,Simran Bansal,BBA,4,RT-005,Ambala Cantt
+CTU1285,Riya Mehta,BBA,7,RT-005,Ambala Cantt
+CTU1286,Harsh Arora,B.Tech AI,3,RT-005,Ambala City
+CTU1287,Rahul Jain,B.Com,6,RT-005,Model Town
+CTU1288,Riya Arora,B.Com,7,RT-005,Ambala City
+CTU1289,Yash Gupta,MBA,2,RT-005,Ambala Cantt
+CTU1290,Diya Sharma,MBA,7,RT-005,Ambala Cantt
+CTU1291,Rahul Sharma,MCA,6,RT-005,Ambala City
+CTU1292,Ishita Singh,BCA,4,RT-005,Ambala City
+CTU1293,Mehak Gupta,B.Com,8,RT-005,Ambala City
+CTU1294,Diya Gupta,B.Tech CSE,4,RT-005,Ambala Cantt
+CTU1295,Harsh Mehta,B.Com,8,RT-005,Model Town
+CTU1296,Vivaan Sharma,B.Tech CSE,6,RT-005,Ambala City
+CTU1297,Aarav Kaur,BCA,6,RT-005,Model Town
+CTU1298,Tanya Sharma,MCA,5,RT-005,Ambala Cantt
+CTU1299,Sanya Malhotra,B.Tech CSE,7,RT-005,Ambala City
+CTU1300,Dev Bansal,B.Tech CSE,2,RT-005,Ambala Cantt
