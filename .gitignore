@@ -1,0 +1,27 @@
+# dependencies
+node_modules/
+
+# build outputs
+.next/
+dist/
+build/
+coverage/
+.turbo/
+
+# environment variables
+.env
+.env.*
+!.env.example
+
+# database & logs
+*.db
+*.sqlite
+*.log
+
+# OS & IDEs
+.DS_Store
+.vscode/
+.idea/
+.claude/
+.gemini/
+

@@ -1,0 +1,6 @@
+route_id,name,start_location,end_location,estimated_distance,estimated_duration
+RT-001,Zirakpur Route,Zirakpur,Chitkara University,11 km,26 min
+RT-002,Mohali Route,Mohali,Chitkara University,17 km,42 min
+RT-003,Chandigarh Route,Chandigarh,Chitkara University,16 km,47 min
+RT-004,Rajpura Route,Rajpura,Chitkara University,24 km,44 min
+RT-005,Ambala Route,Ambala,Chitkara University,19 km,48 min

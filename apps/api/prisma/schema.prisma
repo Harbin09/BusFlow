@@ -1,0 +1,386 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ==================== ENUMS ====================
+
+enum UserRole {
+  ADMIN
+  DRIVER
+  STUDENT
+  PARENT
+  COORDINATOR
+}
+
+enum BusStatus {
+  ACTIVE
+  INACTIVE
+  MAINTENANCE
+  DECOMMISSIONED
+}
+
+enum StudentDailyStatusType {
+  PRESENT
+  ABSENT
+  REQUESTED_LEAVE
+  EXCUSED_ABSENCE
+  LATE_PICKUP
+}
+
+enum BusLiveStatusType {
+  ACTIVE
+  INACTIVE
+  IN_TRANSIT
+  AT_STOP
+  MAINTENANCE
+  OFFLINE
+}
+
+enum NotificationStatus {
+  UNREAD
+  READ
+  ARCHIVED
+}
+
+enum TimetableStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum TimetableType {
+  CLASS
+  EXAM
+  HOLIDAY
+  EVENT
+}
+
+enum TripStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  DELAYED
+}
+
+enum StudentTripAssignmentStatus {
+  SCHEDULED
+  BOARDED
+  ALIGHTED
+  NO_SHOW
+  CANCELLED
+}
+
+// ==================== CORE MODELS ====================
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String?
+  name      String
+  role      UserRole @default(STUDENT)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  student       Student?
+  driver        Driver?
+  notifications Notification[]
+
+  @@index([email])
+}
+
+model Student {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Master student data
+  studentNo String  @unique
+  program   String?
+  semester  String?
+  campus    String?
+
+  // Default pickup assignment (from Static Master)
+  routeId String?
+  route   Route?  @relation(fields: [routeId], references: [id], onDelete: SetNull)
+
+  pickupStopId String?
+  pickupStop   Stop?   @relation(fields: [pickupStopId], references: [id], onDelete: SetNull, name: "pickupStop")
+
+  pickupCity String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  dailyStatus StudentDailyStatus[]
+  tripAssignments StudentTripAssignment[]
+
+  @@index([studentNo])
+  @@index([routeId])
+  @@index([pickupStopId])
+  @@index([program])
+  @@index([campus])
+}
+
+model Driver {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  licenseNo String  @unique
+  phone     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  trips Trip[]
+
+  @@index([licenseNo])
+}
+
+model Bus {
+  id          String    @id @default(cuid())
+  plateNumber String    @unique
+  capacity    Int
+  status      BusStatus @default(ACTIVE)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  liveStatus BusLiveStatus?
+  trips      Trip[]
+
+  @@index([plateNumber])
+  @@index([status])
+}
+
+model Route {
+  id          String  @id @default(cuid())
+  name        String  @unique
+  description String?
+
+  estimatedDistance Float?
+  estimatedDuration Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  stops      Stop[]
+  students   Student[]
+  timetables Timetable[]
+  trips      Trip[]
+
+  @@index([name])
+}
+
+model Stop {
+  id        String @id @default(cuid())
+  name      String
+  latitude  Float
+  longitude Float
+
+  routeId String
+  route   Route  @relation(fields: [routeId], references: [id], onDelete: Cascade)
+
+  order Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  pickupStudents       Student[]       @relation("pickupStop")
+  busLiveStatusCurrent BusLiveStatus[] @relation("currentStop")
+  busLiveStatusNext    BusLiveStatus[] @relation("nextStop")
+  boardingAssignments  StudentTripAssignment[] @relation("boardingStop")
+
+  @@unique([routeId, order])
+  @@index([routeId])
+}
+
+// ==================== DAILY STATUS MODELS ====================
+
+model StudentDailyStatus {
+  id        String  @id @default(cuid())
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  date   DateTime
+  status StudentDailyStatusType @default(ABSENT)
+
+  pickupTime  DateTime?
+  dropoffTime DateTime?
+  notes       String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([studentId, date])
+  @@index([studentId])
+  @@index([date])
+}
+
+// ==================== LIVE STATUS MODELS ====================
+
+model BusLiveStatus {
+  id    String @id @default(cuid())
+  busId String @unique
+  bus   Bus    @relation(fields: [busId], references: [id], onDelete: Cascade)
+
+  tripId String?
+
+  latitude  Float
+  longitude Float
+  speed     Float             @default(0)
+  heading   Float?
+  status    BusLiveStatusType @default(OFFLINE)
+
+  timestamp   DateTime  @default(now())
+
+  currentStopId String?
+  currentStop   Stop?   @relation(fields: [currentStopId], references: [id], onDelete: SetNull, name: "currentStop")
+
+  nextStopId String?
+  nextStop   Stop?   @relation(fields: [nextStopId], references: [id], onDelete: SetNull, name: "nextStop")
+
+  totalStudentsOnboard Int @default(0)
+
+  lastUpdated DateTime @default(now()) @updatedAt
+
+  @@index([busId])
+  @@index([tripId])
+  @@index([status])
+  @@index([timestamp])
+  @@index([currentStopId])
+  @@index([nextStopId])
+}
+
+// ==================== TIMETABLE MODELS ====================
+
+model Timetable {
+  id      String @id @default(cuid())
+  routeId String
+  route   Route  @relation(fields: [routeId], references: [id], onDelete: Cascade)
+
+  date      DateTime
+  startTime DateTime
+  endTime   DateTime?
+  status    TimetableStatus @default(SCHEDULED)
+  type      TimetableType   @default(CLASS)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  trips Trip[]
+
+  @@unique([routeId, date])
+  @@index([routeId])
+  @@index([date])
+  @@index([status])
+  @@index([type])
+}
+
+// ==================== TRIP MODELS ====================
+
+model Trip {
+  id      String @id @default(cuid())
+  routeId String
+  route   Route  @relation(fields: [routeId], references: [id], onDelete: Cascade)
+
+  busId String
+  bus   Bus    @relation(fields: [busId], references: [id], onDelete: Cascade)
+
+  driverId String
+  driver   Driver @relation(fields: [driverId], references: [id], onDelete: Cascade)
+
+  date          DateTime
+  departureTime DateTime
+  arrivalTime   DateTime?
+  status        TripStatus @default(SCHEDULED)
+
+  generatedByRuleEngine Boolean @default(false)
+
+  timetableId String?
+  timetable   Timetable? @relation(fields: [timetableId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([busId, date, departureTime])
+  @@index([routeId])
+  @@index([busId])
+  @@index([driverId])
+  @@index([timetableId])
+  @@index([date])
+  @@index([status])
+  @@index([generatedByRuleEngine])
+
+  assignments StudentTripAssignment[]
+}
+
+// ==================== STUDENT TRIP ASSIGNMENT MODELS ====================
+
+model StudentTripAssignment {
+  id        String @id @default(cuid())
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  tripId String
+  trip   Trip   @relation(fields: [tripId], references: [id], onDelete: Cascade)
+
+  boardingStopId String?
+  boardingStop   Stop?   @relation(fields: [boardingStopId], references: [id], onDelete: SetNull, name: "boardingStop")
+
+  status StudentTripAssignmentStatus @default(SCHEDULED)
+
+  boardingTime  DateTime?
+  alightingTime DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([studentId, tripId])
+  @@index([studentId])
+  @@index([tripId])
+  @@index([status])
+  @@index([boardingStopId])
+}
+
+// ==================== NOTIFICATION MODELS ====================
+
+model Notification {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  title   String
+  message String
+  status  NotificationStatus @default(UNREAD)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// ==================== AUDIT MODELS ====================
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String
+  entity    String
+  entityId  String?
+  userId    String?
+  details   Json?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([entity])
+  @@index([entityId])
+  @@index([createdAt])
+}

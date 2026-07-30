@@ -1,0 +1,18 @@
+stop_id,name,route_id,sequence
+STP-001,VIP Road,RT-001,1
+STP-002,Baltana,RT-001,2
+STP-003,Dhakoli,RT-001,3
+STP-004,Patiala Road,RT-001,4
+STP-005,Airport Road,RT-002,5
+STP-006,Phase 10,RT-002,6
+STP-007,Phase 7,RT-002,7
+STP-008,Sector 43,RT-003,8
+STP-009,Sector 17,RT-003,9
+STP-010,Sector 22,RT-003,10
+STP-011,Sector 34,RT-003,11
+STP-012,Urban Estate,RT-004,12
+STP-013,New Bus Stand,RT-004,13
+STP-014,Old Rajpura,RT-004,14
+STP-015,Model Town,RT-005,15
+STP-016,Ambala Cantt,RT-005,16
+STP-017,Ambala City,RT-005,17
