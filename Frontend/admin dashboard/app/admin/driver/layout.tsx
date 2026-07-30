@@ -14,7 +14,7 @@ export default function DriverLayout({
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    if (!isAuthenticated() || !hasRole('DRIVER')) {
+    if (!isAuthenticated() || (!hasRole('DRIVER') && !hasRole('ADMIN'))) {
       router.replace('/login');
       return;
     }

@@ -21,6 +21,17 @@ export function useGenerateTrips(date: string, enabled = true) {
   });
 }
 
+export function useGenerateTripsMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (date: string) => operationsService.generateTrips(date),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['trips'] });
+    },
+  });
+}
+
+
 /**
  * Get today's trip for driver
  */

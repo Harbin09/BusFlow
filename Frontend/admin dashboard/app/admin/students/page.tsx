@@ -20,6 +20,15 @@ export default function StudentsPage() {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
 
+  const demoStudents: StudentItem[] = [
+    { id: 'STU-001', studentNo: 'DU-2024-001', name: 'Arjun Verma', email: 'arjun@university.edu', program: 'Computer Science', semester: '3rd', assignedRoute: 'Route-A1', pickupStop: 'Gate-1', passStatus: 'ACTIVE' },
+    { id: 'STU-002', studentNo: 'DU-2024-002', name: 'Shreya Patel', email: 'shreya@university.edu', program: 'Business Admin', semester: '2nd', assignedRoute: 'Route-B2', pickupStop: 'Gate-2', passStatus: 'ACTIVE' },
+    { id: 'STU-003', studentNo: 'DU-2024-003', name: 'Rohit Saxena', email: 'rohit@university.edu', program: 'Mechanical Eng', semester: '4th', assignedRoute: 'Route-C3', pickupStop: 'Gate-3', passStatus: 'ACTIVE' },
+    { id: 'STU-004', studentNo: 'DU-2024-004', name: 'Anjali Kapoor', email: 'anjali@university.edu', program: 'Electronics Eng', semester: '1st', assignedRoute: 'Route-D4', pickupStop: 'Gate-1', passStatus: 'ACTIVE' },
+    { id: 'STU-005', studentNo: 'DU-2024-005', name: 'Vikrant Singh', email: 'vikrant@university.edu', program: 'Civil Eng', semester: '3rd', assignedRoute: 'Route-E5', pickupStop: 'Gate-4', passStatus: 'ACTIVE' },
+    { id: 'STU-006', studentNo: 'DU-2024-006', name: 'Divya Nair', email: 'divya@university.edu', program: 'Finance', semester: '2nd', assignedRoute: 'Route-A1', pickupStop: 'Gate-2', passStatus: 'ACTIVE' },
+  ];
+
   useEffect(() => {
     async function loadStudents() {
       setLoading(true);
@@ -28,9 +37,12 @@ export default function StudentsPage() {
         const items = Array.isArray(res.data) ? res.data : (res.data?.data || []);
         if (items.length > 0) {
           setStudents(items);
+        } else {
+          setStudents(demoStudents);
         }
       } catch (err) {
-        console.warn('Failed to load students from REST API');
+        console.warn('Failed to load students from REST API, using demo data');
+        setStudents(demoStudents);
       }
       setLoading(false);
     }

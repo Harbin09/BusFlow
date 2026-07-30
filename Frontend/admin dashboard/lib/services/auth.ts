@@ -147,6 +147,9 @@ export function logout(): void {
  */
 export function setToken(token: string): void {
   localStorage.setItem(TOKEN_STORAGE_KEY, token);
+  if (typeof window !== 'undefined') {
+    document.cookie = `${TOKEN_STORAGE_KEY}=${token}; path=/; max-age=86400; SameSite=Lax`;
+  }
 }
 
 /**
@@ -154,19 +157,7 @@ export function setToken(token: string): void {
  */
 export function getToken(): string | null {
   if (typeof window === 'undefined') return null;
-  let token = localStorage.getItem(TOKEN_STORAGE_KEY);
-  if (!token) {
-    const devUser: User = {
-      id: 'admin-001',
-      email: 'admin@busflow.com',
-      name: 'Admin User',
-      role: 'ADMIN',
-    };
-    token = generateMockToken(devUser);
-    localStorage.setItem(TOKEN_STORAGE_KEY, token);
-    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(devUser));
-  }
-  return token;
+  return localStorage.getItem(TOKEN_STORAGE_KEY);
 }
 
 /**
@@ -175,6 +166,7 @@ export function getToken(): string | null {
 export function clearToken(): void {
   if (typeof window !== 'undefined') {
     localStorage.removeItem(TOKEN_STORAGE_KEY);
+    document.cookie = `${TOKEN_STORAGE_KEY}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
   }
 }
 
@@ -183,6 +175,9 @@ export function clearToken(): void {
  */
 export function setUser(user: User): void {
   localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
+  if (typeof window !== 'undefined') {
+    document.cookie = `bus_flow_role=${user.role}; path=/; max-age=86400; SameSite=Lax`;
+  }
 }
 
 /**
@@ -192,16 +187,7 @@ export function getUser(): User | null {
   if (typeof window === 'undefined') return null;
 
   const stored = localStorage.getItem(USER_STORAGE_KEY);
-  if (!stored) {
-    const devUser: User = {
-      id: 'admin-001',
-      email: 'admin@busflow.com',
-      name: 'Admin User',
-      role: 'ADMIN',
-    };
-    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(devUser));
-    return devUser;
-  }
+  if (!stored) return null;
 
   try {
     return JSON.parse(stored);
@@ -216,6 +202,7 @@ export function getUser(): User | null {
 export function clearUser(): void {
   if (typeof window !== 'undefined') {
     localStorage.removeItem(USER_STORAGE_KEY);
+    document.cookie = `bus_flow_role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
   }
 }
 
@@ -244,8 +231,16 @@ export function isTokenValid(): boolean {
  * Get current user's role
  */
 export function getUserRole(): UserRole | null {
-  const user = getUser();
-  return user?.role || null;
+  const token = getToken();
+  if (!token) return null;
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) return null;
+    const payload = JSON.parse(atob(parts[1]));
+    return payload.role || null;
+  } catch {
+    return null;
+  }
 }
 
 /**

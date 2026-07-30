@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { useGenerateTrips } from '@/lib/hooks/useOperations';
+import { useGenerateTripsMutation } from '@/lib/hooks/useOperations';
 import { useAllBusLocations } from '@/lib/hooks/useTracking';
 import { apiClient } from '@/lib/api';
 
@@ -24,12 +24,12 @@ export default function AdminDashboard() {
   const [generatingDate, setGeneratingDate] = useState(today);
   const [lastUpdated, setLastUpdated] = useState<string>('');
 
-  const generateTripsQuery = useGenerateTrips(generatingDate, false);
+  const generateTripsMutation = useGenerateTripsMutation();
   const { locations, isConnected, error: wsError } = useAllBusLocations(true);
 
   const activeLocs = locations.length;
   const inTransitCount = locations.filter((l) => l.status === 'IN_TRANSIT').length;
-  const totalTripsCount = generateTripsQuery.data?.summary?.total || 3;
+  const totalTripsCount = generateTripsMutation.data?.summary?.total || 3;
 
   const stats: OperationalStats = React.useMemo(() => ({
     buses: {
@@ -52,8 +52,12 @@ export default function AdminDashboard() {
   }, [locations.length]);
 
   const handleGenerateTrips = async () => {
-    await generateTripsQuery.refetch();
-    setLastUpdated(new Date().toLocaleTimeString());
+    try {
+      await generateTripsMutation.mutateAsync(generatingDate);
+      setLastUpdated(new Date().toLocaleTimeString());
+    } catch {
+      // handled by mutation error
+    }
   };
 
   return (
@@ -89,41 +93,41 @@ export default function AdminDashboard() {
                   type="date"
                   value={generatingDate}
                   onChange={(e) => setGeneratingDate(e.target.value)}
-                  disabled={generateTripsQuery.isPending}
+                  disabled={generateTripsMutation.isPending}
                   className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none disabled:bg-gray-50"
                 />
               </div>
 
               <button
                 onClick={handleGenerateTrips}
-                disabled={generateTripsQuery.isPending}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+                disabled={generateTripsMutation.isPending}
+                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium cursor-pointer"
               >
-                {generateTripsQuery.isPending ? '⏳ Generating...' : '📅 Generate Trips'}
+                {generateTripsMutation.isPending ? '⏳ Generating...' : '📅 Generate Trips'}
               </button>
             </div>
 
-            {generateTripsQuery.error && (
+            {generateTripsMutation.error && (
               <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
                 <span className="text-lg">❌</span>
                 <div>
                   <p className="text-red-800 text-sm font-medium">Generation Failed</p>
                   <p className="text-red-700 text-xs">
-                    {generateTripsQuery.error instanceof Error
-                      ? generateTripsQuery.error.message
+                    {generateTripsMutation.error instanceof Error
+                      ? generateTripsMutation.error.message
                       : 'Failed to generate trips'}
                   </p>
                 </div>
               </div>
             )}
 
-            {generateTripsQuery.data && (
+            {generateTripsMutation.data && (
               <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg flex items-start gap-3">
                 <span className="text-lg">✅</span>
                 <div>
                   <p className="text-green-800 text-sm font-medium">Trips Generated</p>
                   <p className="text-green-700 text-xs">
-                    {generateTripsQuery.data.summary.total} total • {generateTripsQuery.data.summary.approved} approved
+                    {generateTripsMutation.data.summary.total} total • {generateTripsMutation.data.summary.approved} approved
                   </p>
                 </div>
               </div>

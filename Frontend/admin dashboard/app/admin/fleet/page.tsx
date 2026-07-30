@@ -18,6 +18,15 @@ export default function FleetPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
 
+  const demoBuses: BusItem[] = [
+    { id: 'BUS-001', plateNumber: 'DL-01-AA-1001', capacity: 50, status: 'ACTIVE', assignedDriver: 'Rajesh Kumar', assignedRoute: 'Route-A1' },
+    { id: 'BUS-002', plateNumber: 'DL-01-AA-1002', capacity: 50, status: 'ACTIVE', assignedDriver: 'Priya Singh', assignedRoute: 'Route-B2' },
+    { id: 'BUS-003', plateNumber: 'DL-01-AA-1003', capacity: 45, status: 'MAINTENANCE', assignedDriver: 'Unassigned', assignedRoute: 'Route-C3' },
+    { id: 'BUS-004', plateNumber: 'DL-01-AA-1004', capacity: 50, status: 'ACTIVE', assignedDriver: 'Amit Patel', assignedRoute: 'Route-A1' },
+    { id: 'BUS-005', plateNumber: 'DL-01-AA-1005', capacity: 48, status: 'ACTIVE', assignedDriver: 'Vikram Singh', assignedRoute: 'Route-D4' },
+    { id: 'BUS-006', plateNumber: 'DL-01-AA-1006', capacity: 50, status: 'ACTIVE', assignedDriver: 'Neha Sharma', assignedRoute: 'Route-E5' },
+  ];
+
   useEffect(() => {
     async function loadBuses() {
       setLoading(true);
@@ -26,9 +35,12 @@ export default function FleetPage() {
         const items = Array.isArray(res.data) ? res.data : (res.data?.data || []);
         if (items.length > 0) {
           setBuses(items);
+        } else {
+          setBuses(demoBuses);
         }
       } catch (err) {
-        console.warn('Failed to load buses from REST API');
+        console.warn('Failed to load buses from REST API, using demo data');
+        setBuses(demoBuses);
       }
       setLoading(false);
     }

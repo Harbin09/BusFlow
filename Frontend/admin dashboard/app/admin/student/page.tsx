@@ -1,18 +1,33 @@
 'use client';
 
 import React, { useState } from 'react';
+import dynamic from 'next/dynamic';
 import {
   useStudentTodayTrip,
-  useBusLocation,
 } from '@/lib/hooks/useOperations';
+import { useTripTracking } from '@/lib/hooks/useTracking';
+
+// Dynamically import map component to avoid SSR issues with Leaflet
+const TrackingMap = dynamic(() => import('@/lib/components/TrackingMap'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-[400px] bg-gray-100 rounded-lg flex items-center justify-center">
+      <div className="text-center">
+        <div className="text-4xl mb-2 animate-spin">🗺️</div>
+        <p className="text-gray-600">Loading map...</p>
+      </div>
+    </div>
+  ),
+});
 
 export default function StudentPortal() {
   const tripQuery = useStudentTodayTrip();
-  const busLocationQuery = useBusLocation(tripQuery.data?.id || null);
+  const { locations: trackingLocations, isConnected, error: wsError } = useTripTracking(tripQuery.data?.id || null, true);
   const [expandedSection, setExpandedSection] = useState<'trip' | 'bus' | null>(null);
 
   const trip = tripQuery.data;
-  const busLocation = busLocationQuery.data;
+  // Get the bus location from real-time tracking (Socket.IO), if available
+  const busLocation = trackingLocations.length > 0 ? trackingLocations[0] : null;
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -154,117 +169,59 @@ export default function StudentPortal() {
             </div>
           </div>
 
-          {/* Real-time Bus Location */}
+          {/* Real-time Bus Location with Interactive Map */}
           <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-            <button
-              onClick={() => setExpandedSection(expandedSection === 'bus' ? null : 'bus')}
-              className="w-full px-6 py-4 text-left hover:bg-gray-50 transition-colors flex items-center justify-between"
-            >
-              <div>
-                <h3 className="text-lg font-bold text-gray-900">Bus Location</h3>
-                <p className="text-sm text-gray-600 mt-1">Real-time tracking information</p>
-              </div>
-              <span
-                className={`text-2xl transition-transform ${expandedSection === 'bus' ? 'rotate-180' : ''}`}
-              >
-                ▼
-              </span>
-            </button>
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h3 className="text-lg font-bold text-gray-900">Live Bus Tracking</h3>
+              <p className="text-sm text-gray-600 mt-1">Real-time location and tracking on interactive map</p>
+            </div>
 
-            {expandedSection === 'bus' && (
-              <div className="p-6 border-t border-gray-200">
-                {busLocationQuery.isPending && (
-                  <div className="text-center py-8">
-                    <div className="animate-spin text-4xl mb-3">📍</div>
-                    <p className="text-gray-600">Getting bus location...</p>
-                  </div>
-                )}
+            <div className="p-6">
+              {/* Interactive Map */}
+              <TrackingMap
+                busLocation={busLocation}
+                isConnected={isConnected}
+                tripStatus={trip?.status}
+                busNumber={busLocation?.busId}
+                eta={trip?.arrivalTime}
+              />
 
-                {busLocationQuery.isError && (
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                    <p className="text-red-800 text-sm">
-                      <strong>Error:</strong> Could not fetch bus location. Please try again.
-                    </p>
-                  </div>
-                )}
+              {/* Error Display */}
+              {wsError && (
+                <div className="mt-4 bg-red-50 border border-red-200 rounded-lg p-4">
+                  <p className="text-red-800 text-sm">
+                    <strong>Connection Error:</strong> {wsError}
+                  </p>
+                </div>
+              )}
 
-                {busLocationQuery.isSuccess && busLocation && (
-                  <>
-                    {/* Bus Status Card */}
-                    <div className={`rounded-lg p-6 mb-6 border ${getBusStatusColor(busLocation.status)}`}>
-                      <div className="flex items-center justify-between mb-4">
-                        <div>
-                          <h4 className="text-xl font-bold text-gray-900">Bus {busLocation.busId}</h4>
-                          <p className="text-sm text-gray-700 mt-1">Trip {busLocation.tripId}</p>
-                        </div>
-                        <span className="text-4xl">🚌</span>
-                      </div>
-
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div>
-                          <p className="text-xs font-semibold text-gray-700">SPEED</p>
-                          <p className="text-2xl font-bold text-gray-900 mt-1">{busLocation.speed}</p>
-                          <p className="text-xs text-gray-600">km/h</p>
-                        </div>
-                        <div>
-                          <p className="text-xs font-semibold text-gray-700">STATUS</p>
-                          <p className="text-sm font-bold text-gray-900 mt-2">{busLocation.status}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs font-semibold text-gray-700">STUDENTS ABOARD</p>
-                          <p className="text-2xl font-bold text-gray-900 mt-1">{busLocation.totalStudentsOnboard}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs font-semibold text-gray-700">LAST UPDATE</p>
-                          <p className="text-xs text-gray-700 mt-2">
-                            {new Date(busLocation.lastUpdated).toLocaleTimeString()}
-                          </p>
-                        </div>
-                      </div>
+              {/* Bus Info Card Below Map */}
+              {busLocation && (
+                <div className="mt-6 bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-lg p-6">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div>
+                      <p className="text-xs font-semibold text-gray-700">SPEED</p>
+                      <p className="text-2xl font-bold text-gray-900 mt-1">{busLocation.speed}</p>
+                      <p className="text-xs text-gray-600">km/h</p>
                     </div>
-
-                    {/* Location Details */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                        <p className="text-xs text-blue-600 font-semibold">COORDINATES</p>
-                        <p className="text-sm font-mono text-gray-900 mt-2">
-                          {busLocation.latitude.toFixed(6)}, {busLocation.longitude.toFixed(6)}
-                        </p>
-                      </div>
-
-                      <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-                        <p className="text-xs text-purple-600 font-semibold">HEADING</p>
-                        <p className="text-sm font-mono text-gray-900 mt-2">
-                          {busLocation.heading ? `${busLocation.heading}°` : 'N/A'}
-                        </p>
-                      </div>
-
-                      {busLocation.currentStopId && (
-                        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                          <p className="text-xs text-green-600 font-semibold">CURRENT STOP</p>
-                          <p className="text-sm font-mono text-gray-900 mt-2">{busLocation.currentStopId}</p>
-                        </div>
-                      )}
-
-                      {busLocation.nextStopId && (
-                        <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
-                          <p className="text-xs text-orange-600 font-semibold">NEXT STOP</p>
-                          <p className="text-sm font-mono text-gray-900 mt-2">{busLocation.nextStopId}</p>
-                        </div>
-                      )}
+                    <div>
+                      <p className="text-xs font-semibold text-gray-700">STATUS</p>
+                      <p className="text-sm font-bold text-gray-900 mt-2">{busLocation.status}</p>
                     </div>
-
-                    {/* Last Updated */}
-                    <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200 text-center">
-                      <p className="text-sm text-gray-700">
-                        Last updated:{' '}
-                        <strong>{new Date(busLocation.timestamp).toLocaleTimeString()}</strong>
+                    <div>
+                      <p className="text-xs font-semibold text-gray-700">STUDENTS ABOARD</p>
+                      <p className="text-2xl font-bold text-gray-900 mt-1">{busLocation.totalStudentsOnboard}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-gray-700">LAST UPDATE</p>
+                      <p className="text-xs text-gray-700 mt-2">
+                        {new Date(busLocation.lastUpdated).toLocaleTimeString()}
                       </p>
                     </div>
-                  </>
-                )}
-              </div>
-            )}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Trip Details */}

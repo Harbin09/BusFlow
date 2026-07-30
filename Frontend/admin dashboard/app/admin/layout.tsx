@@ -27,13 +27,25 @@ export default function AdminLayout({
     // Set timestamp client-side only to avoid hydration mismatch
     setLastUpdated(new Date().toLocaleTimeString());
 
-    if (!isAuthenticated() || !hasRole('ADMIN')) {
+    // Check if user is authenticated (don't check role here - child routes will check)
+    if (!isAuthenticated()) {
       router.replace('/login');
       return;
     }
+
+    // If accessing any admin page (not driver/student sub-portals), require ADMIN role
+    const isStudentPath = pathname.startsWith('/admin/student');
+    const isDriverPath = pathname.startsWith('/admin/driver');
+    const isAdminPath = pathname.startsWith('/admin') && !isStudentPath && !isDriverPath;
+
+    if (isAdminPath && !hasRole('ADMIN')) {
+      router.replace('/login');
+      return;
+    }
+
     setUser(getUser());
     setIsLoading(false);
-  }, [router]);
+  }, [pathname]);
 
   if (isLoading) {
     return (

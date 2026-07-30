@@ -14,7 +14,7 @@ export default function StudentLayout({
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    if (!isAuthenticated() || !hasRole('STUDENT')) {
+    if (!isAuthenticated() || (!hasRole('STUDENT') && !hasRole('ADMIN'))) {
       router.replace('/login');
       return;
     }

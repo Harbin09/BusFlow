@@ -11,7 +11,7 @@ export const Header: React.FC<{ title: string }> = ({ title }) => {
   const { user } = useAuth();
 
   return (
-    <header className="h-16 border-b border-slate-800/80 px-6 flex items-center justify-between glass-nav sticky top-16 z-30">
+    <header className="h-16 border border-slate-800/80 px-6 flex items-center justify-between glass-card rounded-xl mb-6 shrink-0">
       <div className="flex items-center gap-4">
         <button
           onClick={toggleSidebar}

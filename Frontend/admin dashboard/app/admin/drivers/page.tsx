@@ -19,6 +19,14 @@ export default function DriversPage() {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
 
+  const demoDrivers: DriverItem[] = [
+    { id: 'DRV-001', name: 'Rajesh Kumar', email: 'rajesh@busflow.com', phone: '+91-9999-0001', licenseNumber: 'DL-0001', status: 'ON_DUTY', assignedBus: 'BUS-001', rating: 4.8 },
+    { id: 'DRV-002', name: 'Priya Singh', email: 'priya@busflow.com', phone: '+91-9999-0002', licenseNumber: 'DL-0002', status: 'ON_DUTY', assignedBus: 'BUS-002', rating: 4.9 },
+    { id: 'DRV-003', name: 'Amit Patel', email: 'amit@busflow.com', phone: '+91-9999-0003', licenseNumber: 'DL-0003', status: 'AVAILABLE', assignedBus: 'BUS-004', rating: 4.7 },
+    { id: 'DRV-004', name: 'Vikram Singh', email: 'vikram@busflow.com', phone: '+91-9999-0004', licenseNumber: 'DL-0004', status: 'ON_DUTY', assignedBus: 'BUS-005', rating: 4.6 },
+    { id: 'DRV-005', name: 'Neha Sharma', email: 'neha@busflow.com', phone: '+91-9999-0005', licenseNumber: 'DL-0005', status: 'OFF_DUTY', assignedBus: 'BUS-006', rating: 4.9 },
+  ];
+
   useEffect(() => {
     async function loadDrivers() {
       setLoading(true);
@@ -27,9 +35,12 @@ export default function DriversPage() {
         const items = Array.isArray(res.data) ? res.data : (res.data?.data || []);
         if (items.length > 0) {
           setDrivers(items);
+        } else {
+          setDrivers(demoDrivers);
         }
       } catch (err) {
-        console.warn('Failed to load drivers from REST API');
+        console.warn('Failed to load drivers from REST API, using demo data');
+        setDrivers(demoDrivers);
       }
       setLoading(false);
     }

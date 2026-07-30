@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { login, isAuthenticated } from '@/lib/services/auth';
+import { login, isAuthenticated, getUser, hasRole } from '@/lib/services/auth';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -11,10 +11,16 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Redirect if already logged in
+  // Redirect if already logged in (based on role)
   useEffect(() => {
     if (isAuthenticated()) {
-      router.replace('/admin');
+      if (hasRole('STUDENT')) {
+        router.replace('/admin/student');
+      } else if (hasRole('DRIVER')) {
+        router.replace('/admin/driver');
+      } else {
+        router.replace('/admin');
+      }
     }
   }, [router]);
 
@@ -25,7 +31,15 @@ export default function LoginPage() {
 
     try {
       await login(email, password);
-      router.replace('/admin');
+
+      // Route based on user role
+      if (hasRole('STUDENT')) {
+        router.replace('/admin/student');
+      } else if (hasRole('DRIVER')) {
+        router.replace('/admin/driver');
+      } else {
+        router.replace('/admin');
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
     } finally {
