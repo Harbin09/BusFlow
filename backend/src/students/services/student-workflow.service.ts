@@ -63,10 +63,10 @@ export class StudentWorkflowService {
       `[StudentWorkflow] Getting today's trip for student ${studentId}`,
     );
 
+    // Use UTC dates to avoid timezone issues
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
+    const todayUTC = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
+    const tomorrowUTC = new Date(todayUTC.getTime() + 24 * 60 * 60 * 1000);
 
     // Get student's trip assignment for today
     const assignment = await this.prisma.studentTripAssignment.findFirst({
@@ -74,8 +74,8 @@ export class StudentWorkflowService {
         studentId,
         trip: {
           date: {
-            gte: today,
-            lt: tomorrow,
+            gte: todayUTC,
+            lt: tomorrowUTC,
           },
         },
       },

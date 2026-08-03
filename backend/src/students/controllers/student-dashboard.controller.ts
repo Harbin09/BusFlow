@@ -650,4 +650,222 @@ export class StudentDashboardController {
       };
     }
   }
+
+  /**
+   * POST /students/seed-demo-data
+   * Seed demo trip data for testing (development only)
+   */
+  @Post('seed-demo-data')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Seed demo data for testing' })
+  async seedDemoData(@CurrentUser() user: any) {
+    this.logger.log(`[StudentDashboard] Seeding demo data for student ${user.id}`);
+
+    try {
+      const student = await this.prisma.student.findFirst({
+        where: { userId: user.id },
+      });
+
+      if (!student) {
+        throw new NotFoundException('Student not found');
+      }
+
+      // Get or create Route
+      let route = await this.prisma.route.findFirst({
+        where: { name: 'Demo Route A' },
+      });
+
+      if (!route) {
+        route = await this.prisma.route.create({
+          data: {
+            name: 'Demo Route A',
+            description: 'Demo route for testing',
+            estimatedDistance: 15,
+            estimatedDuration: 30,
+          },
+        });
+      }
+
+      // Get or create Stops
+      let pickupStop = await this.prisma.stop.findFirst({
+        where: { name: 'Main Gate', routeId: route.id },
+      });
+
+      if (!pickupStop) {
+        pickupStop = await this.prisma.stop.create({
+          data: {
+            name: 'Main Gate',
+            latitude: 28.5355,
+            longitude: 77.0522,
+            routeId: route.id,
+            order: 1,
+          },
+        });
+      }
+
+      let dropoffStop = await this.prisma.stop.findFirst({
+        where: { name: 'University Campus', routeId: route.id },
+      });
+
+      if (!dropoffStop) {
+        dropoffStop = await this.prisma.stop.create({
+          data: {
+            name: 'University Campus',
+            latitude: 28.545,
+            longitude: 77.06,
+            routeId: route.id,
+            order: 2,
+          },
+        });
+      }
+
+      // Get or create Bus
+      let bus = await this.prisma.bus.findFirst({
+        where: { plateNumber: 'DL-01-AB-0001' },
+      });
+
+      if (!bus) {
+        bus = await this.prisma.bus.create({
+          data: {
+            plateNumber: 'DL-01-AB-0001',
+            capacity: 50,
+            status: 'ACTIVE',
+          },
+        });
+      }
+
+      // Get or create Driver
+      let driver = await this.prisma.driver.findFirst({
+        where: { licenseNo: 'DL-DEMO-001' },
+      });
+
+      if (!driver) {
+        // Create demo driver user
+        const driverUser = await this.prisma.user.create({
+          data: {
+            email: `driver-demo-${Date.now()}@busflow.com`,
+            password: 'demo-password',
+            name: 'Demo Driver',
+            role: 'DRIVER',
+          },
+        });
+
+        driver = await this.prisma.driver.create({
+          data: {
+            userId: driverUser.id,
+            licenseNo: 'DL-DEMO-001',
+            phone: '9999999999',
+          },
+        });
+      }
+
+      // Get or create Trip for today - Use UTC date to avoid timezone issues
+      const today = new Date();
+      const todayUTC = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
+      const tomorrowUTC = new Date(todayUTC.getTime() + 24 * 60 * 60 * 1000);
+
+      const departureTime = new Date(Date.UTC(
+        today.getUTCFullYear(),
+        today.getUTCMonth(),
+        today.getUTCDate(),
+        8, 0, 0, 0 // 8:00 AM UTC
+      ));
+
+      let trip = await this.prisma.trip.findFirst({
+        where: {
+          busId: bus.id,
+          date: {
+            gte: todayUTC,
+            lt: tomorrowUTC,
+          },
+        },
+      });
+
+      if (!trip) {
+        trip = await this.prisma.trip.create({
+          data: {
+            routeId: route.id,
+            busId: bus.id,
+            driverId: driver.id,
+            date: todayUTC,
+            departureTime,
+            status: 'SCHEDULED',
+          },
+        });
+      }
+
+      // Assign student to trip
+      let assignment = await this.prisma.studentTripAssignment.findFirst({
+        where: {
+          studentId: student.id,
+          tripId: trip.id,
+        },
+      });
+
+      if (!assignment) {
+        assignment = await this.prisma.studentTripAssignment.create({
+          data: {
+            studentId: student.id,
+            tripId: trip.id,
+            boardingStopId: pickupStop.id,
+            status: 'SCHEDULED',
+          },
+        });
+      }
+
+      // Create Bus Live Status
+      let busLiveStatus = await this.prisma.busLiveStatus.findUnique({
+        where: { busId: bus.id },
+      });
+
+      if (!busLiveStatus) {
+        busLiveStatus = await this.prisma.busLiveStatus.create({
+          data: {
+            busId: bus.id,
+            latitude: 28.5355,
+            longitude: 77.0522,
+            status: 'IN_TRANSIT',
+            currentStopId: pickupStop.id,
+            nextStopId: dropoffStop.id,
+            totalStudentsOnboard: 5,
+          },
+        });
+      } else {
+        // Update existing live status
+        busLiveStatus = await this.prisma.busLiveStatus.update({
+          where: { busId: bus.id },
+          data: {
+            status: 'IN_TRANSIT',
+            currentStopId: pickupStop.id,
+            nextStopId: dropoffStop.id,
+            latitude: 28.5355,
+            longitude: 77.0522,
+            totalStudentsOnboard: 5,
+            lastUpdated: new Date(),
+          },
+        });
+      }
+
+      return {
+        success: true,
+        data: {
+          message: 'Demo data seeded successfully',
+          trip: {
+            id: trip.id,
+            date: trip.date,
+            departureTime: trip.departureTime,
+            routeName: route.name,
+            busNumber: bus.id,
+          },
+        },
+      };
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.logger.error(`[StudentDashboard] Error seeding demo data: ${errorMessage}`);
+      return {
+        success: false,
+        error: errorMessage,
+      };
+    }
+  }
 }

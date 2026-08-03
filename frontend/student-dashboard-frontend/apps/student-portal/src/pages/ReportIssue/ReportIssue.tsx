@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
 import { Card } from '../../components/Card';
 import { Navigation } from '../../components/Navigation';
+import { studentApi } from '../../services/api/studentApi';
+import { addNotification } from '../../components/NotificationToast';
 
 export const ReportIssuePage: React.FC = () => {
   const [formData, setFormData] = useState({
-    type: 'BUS_ISSUE',
-    subject: '',
+    title: '',
     description: '',
-    priority: 'MEDIUM',
+    type: 'BUS_ISSUE' as 'BUS_ISSUE' | 'DRIVER_ISSUE' | 'ROUTE_ISSUE' | 'APP_ISSUE' | 'OTHER',
+    severity: 'MEDIUM' as 'LOW' | 'MEDIUM' | 'HIGH',
   });
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -17,21 +21,39 @@ export const ReportIssuePage: React.FC = () => {
       ...prev,
       [name]: value,
     }));
+    setError('');
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // For now, just show success message (in a real app, this would send to backend)
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      setFormData({
-        type: 'BUS_ISSUE',
-        subject: '',
-        description: '',
-        priority: 'MEDIUM',
+    setLoading(true);
+    setError('');
+
+    try {
+      await studentApi.reportIssue({
+        title: formData.title,
+        description: formData.description,
+        type: formData.type,
+        severity: formData.severity,
       });
-    }, 3000);
+      setSubmitted(true);
+      addNotification('Success', 'Your issue has been submitted successfully!', 'success', 3000);
+      setTimeout(() => {
+        setSubmitted(false);
+        setFormData({
+          title: '',
+          description: '',
+          type: 'BUS_ISSUE',
+          severity: 'MEDIUM',
+        });
+      }, 3000);
+    } catch (err: any) {
+      const errorMsg = err.message || 'Failed to submit report. Please try again.';
+      setError(errorMsg);
+      addNotification('Error', errorMsg, 'error', 5000);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -63,6 +85,11 @@ export const ReportIssuePage: React.FC = () => {
           </Card>
         ) : (
           <Card title="📝 Issue Report Form" subtitle="Tell us what went wrong">
+            {error && (
+              <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+                {error}
+              </div>
+            )}
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Issue Type */}
               <div>
@@ -85,15 +112,15 @@ export const ReportIssuePage: React.FC = () => {
                 </select>
               </div>
 
-              {/* Subject */}
+              {/* Title */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Subject <span className="text-red-600">*</span>
+                  Title <span className="text-red-600">*</span>
                 </label>
                 <input
                   type="text"
-                  name="subject"
-                  value={formData.subject}
+                  name="title"
+                  value={formData.title}
                   onChange={handleChange}
                   placeholder="Brief summary of the issue"
                   required
@@ -101,7 +128,7 @@ export const ReportIssuePage: React.FC = () => {
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  {formData.subject.length}/100 characters
+                  {formData.title.length}/100 characters
                 </p>
               </div>
 
@@ -125,14 +152,14 @@ export const ReportIssuePage: React.FC = () => {
                 </p>
               </div>
 
-              {/* Priority */}
+              {/* Severity */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Priority Level
+                  Severity Level
                 </label>
                 <select
-                  name="priority"
-                  value={formData.priority}
+                  name="severity"
+                  value={formData.severity}
                   onChange={handleChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base"
                   style={{ fontSize: '16px' }}
@@ -140,17 +167,16 @@ export const ReportIssuePage: React.FC = () => {
                   <option value="LOW">Low - Minor inconvenience</option>
                   <option value="MEDIUM">Medium - Affects my schedule</option>
                   <option value="HIGH">High - Serious issue</option>
-                  <option value="CRITICAL">Critical - Safety concern</option>
                 </select>
               </div>
 
               {/* Submit Button */}
               <button
                 type="submit"
-                disabled={!formData.subject || !formData.description}
+                disabled={!formData.title || !formData.description || loading}
                 className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-3 rounded-lg transition-colors"
               >
-                🚀 Submit Report
+                {loading ? '⏳ Submitting...' : '🚀 Submit Report'}
               </button>
             </form>
           </Card>

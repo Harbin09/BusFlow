@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
-import { NotificationsService, CreateNotificationDto } from './notifications.service';
+import { NotificationsService, CreateNotificationDto, SendNotificationDto } from './notifications.service';
 
 @Controller('notifications')
 export class NotificationsController {
@@ -20,6 +20,12 @@ export class NotificationsController {
   @Post('simulate-rain')
   async simulateRain() {
     const data = await this.notificationsService.triggerRainAlert();
+    return { success: true, data };
+  }
+
+  @Post('send')
+  async sendNotification(@Body() dto: SendNotificationDto) {
+    const data = await this.notificationsService.sendNotification(dto);
     return { success: true, data };
   }
 }

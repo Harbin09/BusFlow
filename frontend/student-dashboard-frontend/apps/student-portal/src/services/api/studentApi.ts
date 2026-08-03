@@ -18,8 +18,9 @@ class StudentApiService {
   private api: AxiosInstance;
 
   constructor() {
+    const baseURL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api/v1';
     this.api = axios.create({
-      baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000/api/v1',
+      baseURL: baseURL,
       timeout: 10000,
       headers: {
         'Content-Type': 'application/json',
@@ -294,6 +295,129 @@ class StudentApiService {
     } catch (error) {
       // Return empty array if trip history fails
       return [];
+    }
+  }
+
+  /**
+   * Report an issue
+   */
+  async reportIssue(issueData: {
+    title: string;
+    description: string;
+    type: 'BUS_ISSUE' | 'DRIVER_ISSUE' | 'ROUTE_ISSUE' | 'APP_ISSUE' | 'OTHER';
+    severity: 'LOW' | 'MEDIUM' | 'HIGH';
+    attachmentUrl?: string;
+  }): Promise<{ id: string; status: string }> {
+    try {
+      const response = await this.api.post<ApiResponse<{ id: string; status: string }>>(
+        '/students/issues/report',
+        issueData,
+      );
+      if (!response.data.data) {
+        throw new Error('Failed to report issue');
+      }
+      return response.data.data;
+    } catch (error) {
+      throw this.handleError(error as AxiosError);
+    }
+  }
+
+  /**
+   * Get issue history
+   */
+  async getIssueHistory(): Promise<Array<{
+    id: string;
+    title: string;
+    description: string;
+    type: 'BUS_ISSUE' | 'DRIVER_ISSUE' | 'ROUTE_ISSUE' | 'APP_ISSUE' | 'OTHER';
+    severity: 'LOW' | 'MEDIUM' | 'HIGH';
+    status: 'OPEN' | 'IN_PROGRESS' | 'RESOLVED';
+    createdAt: string;
+    resolvedAt?: string;
+  }>> {
+    try {
+      const response = await this.api.get<ApiResponse<any[]>>(
+        '/students/issues/history',
+      );
+      return response.data.data || [];
+    } catch (error) {
+      return [];
+    }
+  }
+
+  /**
+   * Get notification history
+   */
+  async getNotificationHistory(limit: number = 50): Promise<Array<{
+    id: string;
+    title: string;
+    message: string;
+    type: 'DELAY' | 'STATUS_UPDATE' | 'ALERT' | 'GENERAL';
+    readAt?: string;
+    createdAt: string;
+  }>> {
+    try {
+      const response = await this.api.get<ApiResponse<any[]>>(
+        '/students/notifications/history',
+        {
+          params: { limit },
+        },
+      );
+      return response.data.data || [];
+    } catch (error) {
+      return [];
+    }
+  }
+
+  /**
+   * Get notification preferences
+   */
+  async getNotificationPreferences(): Promise<{
+    emailNotifications: boolean;
+    pushNotifications: boolean;
+    smsNotifications: boolean;
+    delayAlerts: boolean;
+    statusUpdates: boolean;
+  }> {
+    try {
+      const response = await this.api.get<ApiResponse<any>>(
+        '/students/notifications/preferences',
+      );
+      return response.data.data || {
+        emailNotifications: true,
+        pushNotifications: true,
+        smsNotifications: false,
+        delayAlerts: true,
+        statusUpdates: true,
+      };
+    } catch (error) {
+      return {
+        emailNotifications: true,
+        pushNotifications: true,
+        smsNotifications: false,
+        delayAlerts: true,
+        statusUpdates: true,
+      };
+    }
+  }
+
+  /**
+   * Update notification preferences
+   */
+  async updateNotificationPreferences(preferences: {
+    emailNotifications?: boolean;
+    pushNotifications?: boolean;
+    smsNotifications?: boolean;
+    delayAlerts?: boolean;
+    statusUpdates?: boolean;
+  }): Promise<void> {
+    try {
+      await this.api.post(
+        '/students/notifications/preferences',
+        preferences,
+      );
+    } catch (error) {
+      console.error('Failed to update notification preferences:', error);
     }
   }
 }

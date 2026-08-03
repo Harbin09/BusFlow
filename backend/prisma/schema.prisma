@@ -353,12 +353,20 @@ model StudentTripAssignment {
 
 model Notification {
   id     String @id @default(cuid())
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   title   String
   message String
   status  NotificationStatus @default(UNREAD)
+  type    String?
+
+  // Broadcast notification fields
+  recipients    String?           // 'all_students', 'specific_route', 'specific_bus', 'specific_driver'
+  recipientIds  String[]          // Array of IDs for specific recipients
+  totalRecipients Int?            // Total number of recipients
+  readCount     Int @default(0)   // Number of students who read
+  sentAt        DateTime?         // When notification was sent
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -366,6 +374,8 @@ model Notification {
   @@index([userId])
   @@index([status])
   @@index([createdAt])
+  @@index([type])
+  @@index([recipients])
 }
 
 // ==================== AUDIT MODELS ====================
