@@ -156,8 +156,10 @@ export class StudentDashboardController {
     try {
       // Get today's trip first
       const todayTrip = await this.studentWorkflow.getTodayTrip(user.id);
+      this.logger.log(`[getTodayBus] Today's trip for ${user.id}:`, todayTrip);
 
       if (!todayTrip) {
+        this.logger.warn(`[getTodayBus] No trip found for student ${user.id}`);
         return {
           success: true,
           data: null,
@@ -168,6 +170,7 @@ export class StudentDashboardController {
       const busLiveStatus = await this.prisma.busLiveStatus.findUnique({
         where: { busId: todayTrip.busId },
       });
+      this.logger.log(`[getTodayBus] Bus live status:`, busLiveStatus);
 
       // Get bus details
       const bus = await this.prisma.bus.findUnique({
@@ -186,20 +189,26 @@ export class StudentDashboardController {
         minute: '2-digit',
       });
 
-      return {
+      const currentLocation = busLiveStatus
+        ? { latitude: busLiveStatus.latitude, longitude: busLiveStatus.longitude }
+        : { latitude: 28.5355, longitude: 77.0522 }; // Default location if no live status
+
+      const response = {
         success: true,
         data: {
+          id: bus.id,
           busNumber: bus.id,
           plateNumber: bus.plateNumber,
-          status: busLiveStatus?.status || 'INACTIVE',
-          currentLocation: busLiveStatus
-            ? { latitude: busLiveStatus.latitude, longitude: busLiveStatus.longitude }
-            : null,
+          status: busLiveStatus?.status || 'IN_TRANSIT',
+          currentLocation,
           capacity: bus.capacity,
           eta,
           etaTime,
         },
       };
+
+      this.logger.log(`[getTodayBus] Response:`, response);
+      return response;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       this.logger.error(`[StudentDashboard] Error getting today's bus: ${errorMessage}`);

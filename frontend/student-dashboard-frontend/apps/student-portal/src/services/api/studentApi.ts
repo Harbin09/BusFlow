@@ -18,8 +18,9 @@ class StudentApiService {
   private api: AxiosInstance;
 
   constructor() {
+    const baseURL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api/v1';
     this.api = axios.create({
-      baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000/api/v1',
+      baseURL: baseURL,
       timeout: 10000,
       headers: {
         'Content-Type': 'application/json',
@@ -35,7 +36,10 @@ class StudentApiService {
       (config: InternalAxiosRequestConfig) => {
         const token = localStorage.getItem('accessToken');
         if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
+          config.headers['Authorization'] = `Bearer ${token}`;
+          console.log('Auth header set with token:', token.substring(0, 20) + '...');
+        } else {
+          console.warn('No token found in localStorage');
         }
         return config;
       },
@@ -81,8 +85,10 @@ class StudentApiService {
       const response = await this.api.get<ApiResponse<Bus | null>>(
         '/students/today-bus',
       );
+      console.log('[API] getTodayBus response:', response.data);
       return response.data.data || null;
     } catch (error) {
+      console.error('[API] getTodayBus error:', error);
       throw this.handleError(error as AxiosError);
     }
   }
@@ -197,15 +203,9 @@ class StudentApiService {
    */
   async getDashboardData() {
     try {
-      const [
-        student,
-        todayBus,
-        todayTrip,
-        pickupPoint,
-        returnTrip,
-        missedBusInfo,
-        notifications,
-      ] = await Promise.all([
+      console.log('[API] Starting getDashboardData...');
+
+      const results = await Promise.allSettled([
         this.getStudentProfile(),
         this.getTodayBus(),
         this.getTodayTrip(),
@@ -215,16 +215,33 @@ class StudentApiService {
         this.getNotifications(),
       ]);
 
+      const [studentResult, todayBusResult, todayTripResult, pickupPointResult, returnTripResult, missedBusInfoResult, notificationsResult] = results;
+
+      console.log('[API] Dashboard API Results:', {
+        studentStatus: studentResult.status,
+        todayBusStatus: todayBusResult.status,
+        todayTripStatus: todayTripResult.status,
+        pickupPointStatus: pickupPointResult.status,
+      });
+
+      if (studentResult.status === 'rejected') {
+        console.error('[API] Student profile error:', studentResult.reason);
+      }
+      if (todayBusResult.status === 'rejected') {
+        console.error('[API] Today bus error:', todayBusResult.reason);
+      }
+
       return {
-        student,
-        todayBus,
-        todayTrip,
-        pickupPoint,
-        returnTrip,
-        missedBusInfo,
-        notifications,
+        student: studentResult.status === 'fulfilled' ? studentResult.value : null,
+        todayBus: todayBusResult.status === 'fulfilled' ? todayBusResult.value : null,
+        todayTrip: todayTripResult.status === 'fulfilled' ? todayTripResult.value : null,
+        pickupPoint: pickupPointResult.status === 'fulfilled' ? pickupPointResult.value : null,
+        returnTrip: returnTripResult.status === 'fulfilled' ? returnTripResult.value : null,
+        missedBusInfo: missedBusInfoResult.status === 'fulfilled' ? missedBusInfoResult.value : null,
+        notifications: notificationsResult.status === 'fulfilled' ? notificationsResult.value : [],
       };
     } catch (error) {
+      console.error('[API] getDashboardData error:', error);
       throw this.handleError(error as AxiosError);
     }
   }
@@ -294,6 +311,145 @@ class StudentApiService {
     } catch (error) {
       // Return empty array if trip history fails
       return [];
+    }
+  }
+
+  /**
+   * Report an issue
+   */
+  async reportIssue(issueData: {
+    title: string;
+    description: string;
+    type: 'BUS_ISSUE' | 'DRIVER_ISSUE' | 'ROUTE_ISSUE' | 'APP_ISSUE' | 'OTHER';
+    severity: 'LOW' | 'MEDIUM' | 'HIGH';
+    attachmentUrl?: string;
+  }): Promise<{ id: string; status: string }> {
+    try {
+      const response = await this.api.post<ApiResponse<{ id: string; status: string }>>(
+        '/students/issues/report',
+        issueData,
+      );
+      if (!response.data.data) {
+        throw new Error('Failed to report issue');
+      }
+      return response.data.data;
+    } catch (error) {
+      throw this.handleError(error as AxiosError);
+    }
+  }
+
+  /**
+   * Get issue history
+   */
+  async getIssueHistory(): Promise<Array<{
+    id: string;
+    title: string;
+    description: string;
+    type: 'BUS_ISSUE' | 'DRIVER_ISSUE' | 'ROUTE_ISSUE' | 'APP_ISSUE' | 'OTHER';
+    severity: 'LOW' | 'MEDIUM' | 'HIGH';
+    status: 'OPEN' | 'IN_PROGRESS' | 'RESOLVED';
+    createdAt: string;
+    resolvedAt?: string;
+  }>> {
+    try {
+      const response = await this.api.get<ApiResponse<any[]>>(
+        '/students/issues/history',
+      );
+      return response.data.data || [];
+    } catch (error) {
+      return [];
+    }
+  }
+
+  /**
+   * Get notification history
+   */
+  async getNotificationHistory(limit: number = 50): Promise<Array<{
+    id: string;
+    title: string;
+    message: string;
+    type: 'DELAY' | 'STATUS_UPDATE' | 'ALERT' | 'GENERAL';
+    status?: string;
+    readAt?: string;
+    createdAt: string;
+  }>> {
+    try {
+      const response = await this.api.get<ApiResponse<any[]>>(
+        '/students/notifications',
+        {
+          params: { limit },
+        },
+      );
+      return response.data.data || [];
+    } catch (error) {
+      return [];
+    }
+  }
+
+  /**
+   * Get notification preferences
+   */
+  async getNotificationPreferences(): Promise<{
+    emailNotifications: boolean;
+    pushNotifications: boolean;
+    smsNotifications: boolean;
+    delayAlerts: boolean;
+    statusUpdates: boolean;
+  }> {
+    try {
+      const response = await this.api.get<ApiResponse<any>>(
+        '/students/notifications/preferences',
+      );
+      return response.data.data || {
+        emailNotifications: true,
+        pushNotifications: true,
+        smsNotifications: false,
+        delayAlerts: true,
+        statusUpdates: true,
+      };
+    } catch (error) {
+      return {
+        emailNotifications: true,
+        pushNotifications: true,
+        smsNotifications: false,
+        delayAlerts: true,
+        statusUpdates: true,
+      };
+    }
+  }
+
+  /**
+   * Update notification preferences
+   */
+  async updateNotificationPreferences(preferences: {
+    emailNotifications?: boolean;
+    pushNotifications?: boolean;
+    smsNotifications?: boolean;
+    delayAlerts?: boolean;
+    statusUpdates?: boolean;
+  }): Promise<void> {
+    try {
+      await this.api.post(
+        '/students/notifications/preferences',
+        preferences,
+      );
+    } catch (error) {
+      console.error('Failed to update notification preferences:', error);
+    }
+  }
+
+  /**
+   * Seed demo data for testing
+   */
+  async seedDemoData(): Promise<any> {
+    try {
+      const response = await this.api.post<ApiResponse<any>>(
+        '/students/seed-demo-data',
+      );
+      return response.data.data;
+    } catch (error) {
+      console.log('Seed demo data request completed');
+      return null;
     }
   }
 }

@@ -1,5 +1,8 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
-import { NotificationsService, CreateNotificationDto } from './notifications.service';
+import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
+import { NotificationsService, CreateNotificationDto, SendNotificationDto } from './notifications.service';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RoleGuard } from '../auth/guards/role.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
 
 @Controller('notifications')
 export class NotificationsController {
@@ -20,6 +23,14 @@ export class NotificationsController {
   @Post('simulate-rain')
   async simulateRain() {
     const data = await this.notificationsService.triggerRainAlert();
+    return { success: true, data };
+  }
+
+  @Post('send')
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @Roles('ADMIN')
+  async sendNotification(@Body() dto: SendNotificationDto) {
+    const data = await this.notificationsService.sendNotification(dto);
     return { success: true, data };
   }
 }

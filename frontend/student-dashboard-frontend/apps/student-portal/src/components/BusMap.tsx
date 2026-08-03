@@ -25,6 +25,8 @@ export const BusMap: React.FC<BusMapProps> = ({ buses, height = '500px' }) => {
   const markersRef = useRef<any[]>([]);
 
   useEffect(() => {
+    console.log('[BusMap] Component mounted, buses:', buses);
+
     // Load Leaflet CSS dynamically
     if (!document.getElementById('leaflet-css')) {
       const link = document.createElement('link');
@@ -32,17 +34,24 @@ export const BusMap: React.FC<BusMapProps> = ({ buses, height = '500px' }) => {
       link.rel = 'stylesheet';
       link.href = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';
       document.head.appendChild(link);
+      console.log('[BusMap] Leaflet CSS loaded');
     }
 
     // Load Leaflet JS dynamically
     if (!window.L) {
+      console.log('[BusMap] Loading Leaflet JS...');
       const script = document.createElement('script');
       script.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
       script.onload = () => {
+        console.log('[BusMap] Leaflet JS loaded, initializing map');
         initializeMap();
+      };
+      script.onerror = () => {
+        console.error('[BusMap] Failed to load Leaflet JS');
       };
       document.head.appendChild(script);
     } else {
+      console.log('[BusMap] Leaflet already loaded, initializing map');
       initializeMap();
     }
 
@@ -55,39 +64,64 @@ export const BusMap: React.FC<BusMapProps> = ({ buses, height = '500px' }) => {
   }, []);
 
   const initializeMap = () => {
-    if (!mapRef.current || mapInstance.current) return;
+    try {
+      if (!mapRef.current) {
+        console.error('[BusMap] Map ref not available');
+        return;
+      }
+      if (mapInstance.current) {
+        console.log('[BusMap] Map already initialized');
+        return;
+      }
 
-    // Default center (Delhi area)
-    const defaultCenter = [28.6139, 77.2090];
+      console.log('[BusMap] Initializing map with buses:', buses);
 
-    mapInstance.current = window.L.map(mapRef.current).setView(
-      buses.length > 0
+      // Default center (Delhi area)
+      const defaultCenter: [number, number] = [28.6139, 77.2090];
+      const center: [number, number] = buses.length > 0
         ? [buses[0].latitude, buses[0].longitude]
-        : defaultCenter,
-      12
-    );
+        : defaultCenter;
 
-    // Add OpenStreetMap tiles
-    window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      maxZoom: 19,
-    }).addTo(mapInstance.current);
+      console.log('[BusMap] Map center:', center);
 
-    // Add bus markers
-    addBusMarkers();
+      mapInstance.current = window.L.map(mapRef.current).setView(center, 12);
+
+      // Add OpenStreetMap tiles
+      window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19,
+      }).addTo(mapInstance.current);
+
+      console.log('[BusMap] Map initialized successfully');
+
+      // Add bus markers
+      addBusMarkers();
+    } catch (error) {
+      console.error('[BusMap] Error initializing map:', error);
+    }
   };
 
   const addBusMarkers = () => {
-    // Clear existing markers
-    markersRef.current.forEach((marker) => {
-      if (mapInstance.current) {
-        mapInstance.current.removeLayer(marker);
-      }
-    });
-    markersRef.current = [];
+    try {
+      console.log('[BusMap] Adding bus markers, count:', buses.length);
 
-    if (!mapInstance.current || buses.length === 0) return;
+      // Clear existing markers
+      markersRef.current.forEach((marker) => {
+        if (mapInstance.current) {
+          mapInstance.current.removeLayer(marker);
+        }
+      });
+      markersRef.current = [];
+
+      if (!mapInstance.current) {
+        console.error('[BusMap] Map instance not available');
+        return;
+      }
+      if (buses.length === 0) {
+        console.log('[BusMap] No buses to display');
+        return;
+      }
 
     buses.forEach((bus) => {
       const statusColor = bus.status === 'IN_TRANSIT' ? '#ef4444' : '#a3a3a3';
@@ -132,10 +166,14 @@ export const BusMap: React.FC<BusMapProps> = ({ buses, height = '500px' }) => {
       markersRef.current.push(marker);
     });
 
-    // Fit map bounds to all markers
-    if (markersRef.current.length > 0 && buses.length > 0) {
-      const group = window.L.featureGroup(markersRef.current);
-      mapInstance.current.fitBounds(group.getBounds(), { padding: [50, 50] });
+      // Fit map bounds to all markers
+      if (markersRef.current.length > 0 && buses.length > 0) {
+        const group = window.L.featureGroup(markersRef.current);
+        mapInstance.current.fitBounds(group.getBounds(), { padding: [50, 50] });
+        console.log('[BusMap] Markers added:', markersRef.current.length);
+      }
+    } catch (error) {
+      console.error('[BusMap] Error adding markers:', error);
     }
   };
 

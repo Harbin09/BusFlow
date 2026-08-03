@@ -5,13 +5,17 @@ import {
   Route,
   Navigate,
 } from 'react-router-dom';
-import { DashboardV2 } from './pages/Dashboard/DashboardV2';
+import { DashboardStitch } from './pages/Dashboard/DashboardStitch';
 import { Login } from './pages/Login/Login';
-import { TrackBusPage } from './pages/TrackBus/TrackBus';
-import { TripHistoryPage } from './pages/TripHistory/TripHistory';
+import { TrackBusStitch } from './pages/TrackBus/TrackBusStitch';
+import { SchedulesStitch } from './pages/TripHistory/SchedulesStitch';
+import { StopsStitch } from './pages/Stops/StopsStitch';
 import { ReportIssuePage } from './pages/ReportIssue/ReportIssue';
 import { ProfilePage } from './pages/Profile/Profile';
+import { NotificationsStitch } from './pages/Notifications/NotificationsStitch';
 import { studentApi } from './services/api/studentApi';
+import { notificationService } from './services/notificationService';
+import { NotificationToast } from './components/NotificationToast';
 
 /**
  * ProtectedRoute component - redirects to login if not authenticated
@@ -30,18 +34,50 @@ function App() {
     const initializeApp = async () => {
       // Check if token exists
       if (studentApi.isAuthenticated()) {
+        console.log('Token found in localStorage');
         setIsReady(true);
       } else if (process.env.NODE_ENV === 'development') {
         // Auto-login with test credentials in development
         try {
-          await studentApi.login('CTU1001@busflow.com', 'demo-password');
-          console.log('Auto-logged in with test credentials');
+          console.log('Attempting auto-login...');
+          const result = await studentApi.login('CTU1001@busflow.com', 'demo-password');
+          console.log('Auto-logged in successfully:', result.user.email);
+          // Verify token was stored
+          const storedToken = localStorage.getItem('accessToken');
+          console.log('Token stored:', !!storedToken);
+          setIsReady(true);
         } catch (error) {
           console.error('Auto-login failed:', error);
+          console.log('Proceeding without authentication - will redirect to login');
+          setIsReady(true);
         }
-        setIsReady(true);
       } else {
         setIsReady(true);
+      }
+
+      // DISABLED: Service Worker was causing 401 errors on API calls
+      // The SW was intercepting requests without auth headers
+      // try {
+      //   await pwaService.registerServiceWorker();
+      //   console.log('Service Worker registered');
+      // } catch (error) {
+      //   console.warn('Service Worker registration failed:', error);
+      // }
+
+      // Request notification permission and subscribe to push
+      if (studentApi.isAuthenticated()) {
+        try {
+          const permission = await notificationService.requestPermission();
+          if (permission === 'granted') {
+            await notificationService.subscribeToPushNotifications(
+              'current-user-id',
+              'STUDENT'
+            );
+            console.log('Push notifications enabled');
+          }
+        } catch (error) {
+          console.warn('Push notification setup failed:', error);
+        }
       }
     };
 
@@ -54,6 +90,7 @@ function App() {
 
   return (
     <Router>
+      <NotificationToast />
       <Routes>
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />
@@ -63,7 +100,7 @@ function App() {
           path="/"
           element={
             <ProtectedRoute>
-              <DashboardV2 />
+              <DashboardStitch />
             </ProtectedRoute>
           }
         />
@@ -71,15 +108,23 @@ function App() {
           path="/track-bus"
           element={
             <ProtectedRoute>
-              <TrackBusPage />
+              <TrackBusStitch />
             </ProtectedRoute>
           }
         />
         <Route
-          path="/trip-history"
+          path="/schedules"
           element={
             <ProtectedRoute>
-              <TripHistoryPage />
+              <SchedulesStitch />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/stops"
+          element={
+            <ProtectedRoute>
+              <StopsStitch />
             </ProtectedRoute>
           }
         />
@@ -96,6 +141,14 @@ function App() {
           element={
             <ProtectedRoute>
               <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/notifications"
+          element={
+            <ProtectedRoute>
+              <NotificationsStitch />
             </ProtectedRoute>
           }
         />
