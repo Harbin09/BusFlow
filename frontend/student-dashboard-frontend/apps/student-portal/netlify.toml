@@ -1,0 +1,68 @@
+# Netlify Configuration for BusFlow Student Dashboard
+# https://docs.netlify.com/configure-builds/file-based-configuration/
+
+[build]
+  # Build command
+  command = "npm run build"
+
+  # Directory to deploy (output directory)
+  publish = "build"
+
+  # Node version
+  functions = "functions"
+
+# Environment variables for production
+[build.environment]
+  NODE_VERSION = "18"
+  NODE_ENV = "production"
+  CI = "true"
+
+# Redirect all routes to index.html for React Router (SPA)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Custom headers for security and performance
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(self), microphone=()"
+
+# Cache control for static assets
+[[headers]]
+  for = "/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# HTML files should not be cached
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Context-specific settings for staging
+[context.staging]
+  environment = { REACT_APP_API_URL = "https://api-staging.railway.app/api/v1" }
+
+# Context-specific settings for development
+[context.dev]
+  environment = { REACT_APP_API_URL = "http://localhost:5000/api/v1" }
+
+# Context-specific settings for production
+[context.production]
+  environment = { REACT_APP_API_URL = "https://api-production.railway.app/api/v1" }
