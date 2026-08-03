@@ -27,13 +27,25 @@ function App() {
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    // Check if token exists and is still valid by trying to fetch profile
-    if (studentApi.isAuthenticated()) {
-      // Mark as ready - let the ProtectedRoute handle validation
-      setIsReady(true);
-    } else {
-      setIsReady(true);
-    }
+    const initializeApp = async () => {
+      // Check if token exists
+      if (studentApi.isAuthenticated()) {
+        setIsReady(true);
+      } else if (process.env.NODE_ENV === 'development') {
+        // Auto-login with test credentials in development
+        try {
+          await studentApi.login('CTU1001@busflow.com', 'demo-password');
+          console.log('Auto-logged in with test credentials');
+        } catch (error) {
+          console.error('Auto-login failed:', error);
+        }
+        setIsReady(true);
+      } else {
+        setIsReady(true);
+      }
+    };
+
+    initializeApp();
   }, []);
 
   if (!isReady) {
